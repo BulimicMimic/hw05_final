@@ -9,7 +9,6 @@ from django.views.generic import (ListView,
                                   DetailView,
                                   CreateView,
                                   UpdateView,
-                                  DeleteView,
                                   )
 
 from .models import Group, Post, User, Follow, Comment
