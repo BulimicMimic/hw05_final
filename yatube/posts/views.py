@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import (ListView,
                                   DetailView,
@@ -132,10 +133,7 @@ class FollowIndexView(LoginRequiredMixin, ListView):
                 .filter(author__following__user=self.request.user))
 
 
-class ProfileFollowView(LoginRequiredMixin, CreateView):
-    model = Follow
-    fields = ()
-
+class ProfileFollowView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 
@@ -152,18 +150,15 @@ class ProfileFollowView(LoginRequiredMixin, CreateView):
         return redirect('posts:profile', username=self.kwargs['username'])
 
 
-class ProfileUnfollowView(LoginRequiredMixin, DeleteView):
-    model = Follow
-
-    def get_success_url(self):
-        return reverse('posts:profile', args=[self.kwargs['username']])
-
-    def get_object(self, queryset=None):
-        author = get_object_or_404(User, username=self.kwargs['username'])
-        return get_object_or_404(Follow,
-                                 user=self.request.user,
-                                 author=author,
-                                 )
-
+class ProfileUnfollowView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        author = get_object_or_404(User, username=self.kwargs['username'])
+        Follow.objects.filter(
+            user=user,
+            author=author,
+        ).delete()
+        return redirect('posts:profile', username=self.kwargs['username'])
