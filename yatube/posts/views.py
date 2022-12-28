@@ -94,7 +94,7 @@ class PostEditView(LoginRequiredMixin, UpdateView):
         return super().get(self, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse('posts:profile', args=[self.request.user])
+        return reverse('posts:post_detail', args=[self.kwargs['post_id']])
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -135,33 +135,41 @@ class ProfileFollowView(LoginRequiredMixin, CreateView):
     model = Follow
     fields = ()
 
-    def get_form_kwargs(self):
-        """Подготавить данные для формы модели Follow, вместо отсутствующих."""
-        kwargs = super().get_form_kwargs()
-        kwargs['data'] = {}
-        return kwargs
-
-    def get_success_url(self):
-        return reverse('posts:profile', args=[self.kwargs['username']])
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.instance.author = get_object_or_404(
-            User, username=self.kwargs['username'])
-        return super().form_valid(form)
+    # def get_form_kwargs(self):
+    #     """Подготавить данные для формы модели Follow, вместо отсутствующих."""
+    #     kwargs = super().get_form_kwargs()
+    #     kwargs['data'] = {}
+    #     return kwargs
+    #
+    # def get_success_url(self):
+    #     return reverse('posts:profile', args=[self.kwargs['username']])
+    #
+    # def form_valid(self, form):
+    #     form.instance.user = self.request.user
+    #     form.instance.author = get_object_or_404(
+    #         User, username=self.kwargs['username'])
+    #     return super().form_valid(form)
 
     def get(self, request, *args, **kwargs):
+        author = get_object_or_404(User, username=self.kwargs['username'])
+        user = self.request.user
+        follow = Follow.objects.filter(
+            user=user,
+            author=author,
+        ).exists()
+        if follow:
+            return redirect('posts:profile', username=self.kwargs['username'])
         return self.post(request, *args, **kwargs)
 
-# Либо вот такой вариант, он правда мало чем отличается от обычной
-# логики во view-функции
-    # def post(self, request, *args, **kwargs):
-    #     author = get_object_or_404(User, username=self.kwargs['username'])
-    #     Follow.objects.create(
-    #         user=self.request.user,
-    #         author=author,
-    #     )
-    #     return redirect('posts:profile', username=self.kwargs['username'])
+    def post(self, request, *args, **kwargs):
+        author = get_object_or_404(User, username=self.kwargs['username'])
+        user = self.request.user
+        if author != user:
+            Follow.objects.create(
+                user=user,
+                author=author,
+            )
+        return redirect('posts:profile', username=self.kwargs['username'])
 
 
 class ProfileUnfollowView(LoginRequiredMixin, DeleteView):

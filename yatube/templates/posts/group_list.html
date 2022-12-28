@@ -4,6 +4,8 @@
 {% block header %}{{ group }}{% endblock %}
 {% block content %}
   <p>{{ group.description }}</p>
-  {% include 'posts/includes/page_content.html' %}
+  {% for post in page_obj %}
+  {% endfor %}
+  {% include 'posts/includes/post_list.html' %}
   {% include 'posts/includes/paginator.html' %}
 {% endblock %}
