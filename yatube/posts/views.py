@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -136,24 +137,18 @@ class ProfileFollowView(LoginRequiredMixin, CreateView):
     fields = ()
 
     def get(self, request, *args, **kwargs):
-        author = get_object_or_404(User, username=self.kwargs['username'])
-        user = self.request.user
-        follow = Follow.objects.filter(
-            user=user,
-            author=author,
-        ).exists()
-        if follow:
-            return redirect('posts:profile', username=self.kwargs['username'])
         return self.post(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         author = get_object_or_404(User, username=self.kwargs['username'])
         user = self.request.user
         if author != user:
-            Follow.objects.create(
-                user=user,
-                author=author,
-            )
+            try:
+                Follow.objects.create(user=user, author=author)
+            except IntegrityError:
+                return redirect('posts:profile',
+                                username=self.kwargs['username'],
+                                )
         return redirect('posts:profile', username=self.kwargs['username'])
 
 

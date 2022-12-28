@@ -5,6 +5,8 @@
 {% block header %}Последние обновления на сайте{% endblock %}
 {% block content %}
   {% include 'posts/includes/switcher.html' %}
-  {% include 'posts/includes/post_list.html' %}
+  {% for post in page_obj %}
+    {% include 'posts/includes/post_list.html' %}
+  {% endfor %}
   {% include 'posts/includes/paginator.html' %}
 {% endblock %}
