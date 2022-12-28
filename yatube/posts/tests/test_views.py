@@ -4,8 +4,7 @@ import tempfile
 from math import ceil
 
 from django.contrib.auth import get_user_model
-from django.core.cache import cache, caches
-from django.core.cache.backends import locmem
+from django.core.cache import cache
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django import forms
@@ -157,7 +156,6 @@ class PostsPagesTests(TestCase):
         self.assertEqual(post_image_0,
                          PostsPagesTests.posts[-1].image,
                          )
-
 
     def test_profile_page_show_correct_context(self):
         """Шаблон profile сформирован с правильным контекстом."""

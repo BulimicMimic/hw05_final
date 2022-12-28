@@ -146,7 +146,8 @@ class ProfileFollowView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.instance.author = get_object_or_404(User, username=self.kwargs['username'])
+        form.instance.author = get_object_or_404(
+            User, username=self.kwargs['username'])
         return super().form_valid(form)
 
     def get(self, request, *args, **kwargs):
@@ -172,9 +173,9 @@ class ProfileUnfollowView(LoginRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         author = get_object_or_404(User, username=self.kwargs['username'])
         return get_object_or_404(Follow,
-            user=self.request.user,
-            author=author,
-        )
+                                 user=self.request.user,
+                                 author=author,
+                                 )
 
     def get(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
