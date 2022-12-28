@@ -135,21 +135,6 @@ class ProfileFollowView(LoginRequiredMixin, CreateView):
     model = Follow
     fields = ()
 
-    # def get_form_kwargs(self):
-    #     """Подготавить данные для формы модели Follow, вместо отсутствующих."""
-    #     kwargs = super().get_form_kwargs()
-    #     kwargs['data'] = {}
-    #     return kwargs
-    #
-    # def get_success_url(self):
-    #     return reverse('posts:profile', args=[self.kwargs['username']])
-    #
-    # def form_valid(self, form):
-    #     form.instance.user = self.request.user
-    #     form.instance.author = get_object_or_404(
-    #         User, username=self.kwargs['username'])
-    #     return super().form_valid(form)
-
     def get(self, request, *args, **kwargs):
         author = get_object_or_404(User, username=self.kwargs['username'])
         user = self.request.user
