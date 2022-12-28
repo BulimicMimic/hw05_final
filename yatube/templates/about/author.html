@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}About author{% endblock %}
+{% block content %}
+<h1>Hi, I am an author</h1>
+<p>
+  Alatkin Alexander, 35 years old.
+</p>
+<p>
+  I am an beginner backend developer.
+  <br>
+  <a href="https://github.com/BulimicMimic?tab=repositories">This is my github page</a>
+  <br>
+  I graduated from university with a degree in applied mathematics.
+  I follow the same direction developing in programming. I am excited how deep and wide this field is.
+  <br>
+  Here is for the sake of traditions my cup:
+  <br>
+  <img src="{% static "img/cup.png" %}" width="500" height="621" class="d-inline-block align-top" alt="">
+</p>
+{% endblock %}
