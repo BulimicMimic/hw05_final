@@ -306,5 +306,3 @@ class PostsPagesTests(TestCase):
 
         response = self.follower_2_client.get(PostsPagesTests.FOLLOW_URL)
         self.assertEqual(len(response.context['page_obj']), 0)
-
-        post.delete()

@@ -12,9 +12,3 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('text',)
-
-
-class FollowForm(forms.ModelForm):
-    class Meta:
-        model = Follow
-        fields = ('user', 'author')

@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -17,7 +16,7 @@ from .forms import CommentForm
 POST_DISPLAY = 10
 
 
-@method_decorator(cache_page(1 * 20, key_prefix='index_page'), name='dispatch')
+@method_decorator(cache_page(20, key_prefix='index_page'), name='dispatch')
 class IndexView(ListView):
     template_name = 'posts/index.html'
     queryset = Post.objects.select_related('author', 'group')
@@ -140,12 +139,7 @@ class ProfileFollowView(LoginRequiredMixin, View):
         author = get_object_or_404(User, username=self.kwargs['username'])
         user = self.request.user
         if author != user:
-            try:
-                Follow.objects.create(user=user, author=author)
-            except IntegrityError:
-                return redirect('posts:profile',
-                                username=self.kwargs['username'],
-                                )
+            Follow.objects.get_or_create(user=user, author=author)
         return redirect('posts:profile', username=self.kwargs['username'])
 
 

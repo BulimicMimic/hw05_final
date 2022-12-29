@@ -56,12 +56,12 @@ class Post(models.Model):
 
 class Comment(models.Model):
     text = models.TextField(
-        'Текст комментария',
+        verbose_name='Текст комментария',
         help_text='Текст нового комментария',
     )
     created = models.DateTimeField(
         'Дата создания',
-        auto_now_add=True
+        auto_now_add=True,
     )
     author = models.ForeignKey(
         User,
@@ -96,6 +96,10 @@ class Follow(models.Model):
     )
 
     class Meta:
-        unique_together = (('user', 'author'),)
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'author'],
+                                    name='unique_follow',
+                                    )
+        ]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
